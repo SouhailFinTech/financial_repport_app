@@ -1,0 +1,6 @@
+pyautogen
+openai
+yfinance
+streamlit
+matplotlib
+python-dotenv  
