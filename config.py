@@ -1,14 +1,10 @@
 # config.py
 
-import os
-
-OPENAI_API_KEY = "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"
+GEMINI_API_KEY = "AIzaSyA246jklzXxgksUWYIx32U5A9SgmzfIPrw"
 
 LLM_CONFIG = {
-    "config_list": [
-        {
-            "model": "gpt-4o",
-            "api_key": OPENAI_API_KEY
-        }
-    ]
+    "model": "gemini-1.5-pro",
+    "api_key": GEMINI_API_KEY,
+    "temperature": 0.7,
+    "max_tokens": 8192,
 }
