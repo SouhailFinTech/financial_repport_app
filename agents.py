@@ -3,22 +3,23 @@
 from config import llm_config
 import autogen
 
-# Define agents using llm_config from config.py
-
+# Define Agents
 financial_assistant = autogen.AssistantAgent(
     name="Financial_assistant",
     llm_config=llm_config,
+    system_message="You are a financial analyst. Analyze stock prices and ratios.",
 )
 
 research_assistant = autogen.AssistantAgent(
     name="Researcher",
     llm_config=llm_config,
+    system_message="You are a researcher. Find relevant news headlines and market events.",
 )
 
 writer = autogen.AssistantAgent(
     name="Writer",
     llm_config=llm_config,
-    system_message="""You are a professional writer, known for insightful and engaging finance reports.
+    system_message="""You are a professional writer.
     Transform complex concepts into compelling narratives.
     Include all metrics provided.
     Return only the markdown report, no extra text."""
@@ -46,7 +47,7 @@ consistency_reviewer = autogen.AssistantAgent(
 textalignment_reviewer = autogen.AssistantAgent(
     name="Text_Alignment_Reviewer",
     llm_config=llm_config,
-    system_message="Ensure text aligns with the data presented.",
+    system_message="Ensure text aligns with data presented.",
 )
 
 completion_reviewer = autogen.AssistantAgent(
@@ -74,7 +75,7 @@ review_chats = [
 
 critic.register_nested_chats(review_chats, trigger=writer)
 
-# Define user proxy agent directly here (since it uses code_execution_config)
+# User Proxy Agent
 user_proxy_auto = autogen.UserProxyAgent(
     name="User_Proxy_Auto",
     human_input_mode="NEVER",
