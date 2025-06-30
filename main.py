@@ -1,16 +1,15 @@
 # main.py
-import autogen
+
 import streamlit as st
 from datetime import datetime
-# main.py
 
-import streamlit as st
-from agents import financial_assistant, research_assistant, writer, user_proxy_auto
-# Import from your modular files
-from agents import user_proxy_auto, financial_assistant, research_assistant, writer, critic
+# Import agents from agents.py
+from agents import financial_assistant, research_assistant, writer, critic, user_proxy_auto
+
+# Import tasks (make sure create_financial_task and create_research_task are defined in tasks.py)
 from tasks import create_financial_task, create_research_task, writing_task
 
-# Streamlit App UI
+# Streamlit UI
 st.title("📈 Stock Financial Report Generator")
 
 # User input for stock tickers
@@ -21,7 +20,7 @@ if start_analysis and assets.strip():
     tickers = [ticker.strip() for ticker in assets.split(",")]
     date_str = datetime.now().strftime("%Y-%m-%d")
 
-    # Create dynamic tasks with current tickers and date
+    # Create dynamic tasks
     financial_task = create_financial_task(tickers, date_str)
     research_task = create_research_task(tickers)
 
