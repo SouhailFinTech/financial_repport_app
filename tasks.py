@@ -2,14 +2,16 @@
 
 from datetime import datetime
 
+DATE_STR = datetime.now().strftime("%Y-%m-%d")
+
 def create_financial_task(tickers, date_str=None):
     if date_str is None:
-        date_str = datetime.now().strftime("%Y-%m-%d")
+        date_str = DATE_STR
     return f"""
 Today is {date_str}.
 What are the current stock prices of {', '.join(tickers)}, and how is the performance over the past 6 months?
 Start by retrieving the full name of each stock and use it for all future requests.
-Prepare a figure of the normalized price of these stocks and save it to a file named normalized_prices.png.
+Prepare a figure of the normalized price of these stocks and save it to normalized_prices.png.
 Include information about:
 - P/E ratio
 - Dividends
@@ -17,7 +19,7 @@ Include information about:
 - ROE
 Analyze the correlation between the stocks.
 Do not use a solution that requires an API key.
-If some of the data does not make sense, such as a price of 0, change the query and re-try."""
+If some data does not make sense, such as a price of 0, change the query and re-try."""
 
 def create_research_task(tickers):
     return f"""
