@@ -2,7 +2,10 @@
 import autogen
 import streamlit as st
 from datetime import datetime
+# main.py
 
+import streamlit as st
+from agents import financial_assistant, research_assistant, writer, user_proxy_auto
 # Import from your modular files
 from agents import user_proxy_auto, financial_assistant, research_assistant, writer, critic
 from tasks import create_financial_task, create_research_task, writing_task
