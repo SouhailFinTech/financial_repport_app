@@ -1,10 +1,16 @@
-# config.py
+import openai
+import os
 
-GEMINI_API_KEY = "AIzaSyA246jklzXxgksUWYIx32U5A9SgmzfIPrw"
+# Set up local LLM client (Ollama)
+client = openai.OpenAI(
+    base_url="http://localhost:11434/v1",
+    api_key="no-key-needed"
+)
 
-LLM_CONFIG = {
-    "model": "gemini-1.5-pro",
-    "api_key": GEMINI_API_KEY,
+llm_config = {
+    "model": "llama3",
+    "api_key": "no-key-needed",
+    "base_url": "http://localhost:11434/v1",
     "temperature": 0.7,
     "max_tokens": 8192,
 }
