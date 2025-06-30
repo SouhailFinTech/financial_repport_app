@@ -1,100 +1,30 @@
-   # main.py
-
+# main.py
 import autogen
-import openai
 import streamlit as st
 from datetime import datetime
 
-# Local LLM Config (Ollama)
-llm_config = {
-    "model": "llama3",
-    "api_key": "no-key-needed",
-    "base_url": "http://localhost:11434/v1",
-    "temperature": 0.7,
-    "max_tokens": 8192,
-}
+# Import agents from agents.py
+from agents import financial_assistant, research_assistant, writer, critic, user_proxy_auto
 
-# Define Agents
-financial_assistant = autogen.AssistantAgent(
-    name="Financial_assistant",
-    llm_config=llm_config,
-    system_message="You are a financial analyst. Analyze stock prices and ratios.",
-)
-
-research_assistant = autogen.AssistantAgent(
-    name="Researcher",
-    llm_config=llm_config,
-    system_message="You are a researcher. Find relevant news headlines and market events.",
-)
-
-writer = autogen.AssistantAgent(
-    name="Writer",
-    llm_config=llm_config,
-    system_message="""You are a professional writer.
-    Transform complex concepts into compelling narratives.
-    Include all metrics provided.
-    Return only the markdown report, no extra text."""
-)
-
-critic = autogen.AssistantAgent(
-    name="Critic",
-    llm_config=llm_config,
-    system_message="You are a critic. Provide feedback.",
-    is_termination_msg=lambda x: "TERMINATE" in x.get("content", ""),
-)
-
-user_proxy_auto = autogen.UserProxyAgent(
-    name="User_Proxy_Auto",
-    human_input_mode="NEVER",
-    is_termination_msg=lambda x: x.get("content", "").rstrip().endswith("TERMINATE"),
-    code_execution_config={
-        "last_n_messages": 3,
-        "work_dir": "coding",
-        "use_docker": False
-    },
-)
+# Import tasks (make sure create_financial_task and create_research_task are defined in tasks.py)
+from tasks import create_financial_task, create_research_task, writing_task
 
 # Streamlit UI
 st.title("📈 Stock Financial Report Generator")
 
-assets = st.text_input("Enter stock tickers:", value="AAPL, MSFT, TSLA")
-hit_button = st.button("Start Analysis")
+# User input for stock tickers
+assets = st.text_input("Enter stock tickers separated by commas:", value="AAPL, MSFT, TSLA")
+start_analysis = st.button("Generate Report")
 
-if hit_button and assets.strip():
+if start_analysis and assets.strip():
     tickers = [ticker.strip() for ticker in assets.split(",")]
     date_str = datetime.now().strftime("%Y-%m-%d")
 
-    financial_task = f"""
-    Today is {date_str}.
-    What are the current stock prices of {', '.join(tickers)}, and how is the performance over the past 6 months?
-    Start by retrieving the full name of each stock and use it for all future requests.
-    Prepare a figure of the normalized price of these stocks and save it to normalized_prices.png.
-    Include information about:
-    - P/E ratio
-    - Dividends
-    - Price to book
-    - ROE
-    Analyze the correlation between the stocks.
-    Do not use a solution that requires an API key.
-    If some data does not make sense, such as a price of 0, re-query."""
+    # Create dynamic tasks
+    financial_task = create_financial_task(tickers, date_str)
+    research_task = create_research_task(tickers)
 
-    research_task = f"""
-    Investigate possible reasons for the stock performance leveraging market news headlines.
-    Retrieve news headlines for {', '.join(tickers)}.
-    Be precise but avoid vague or irrelevant events."""
-
-    writing_task = """
-    Develop an engaging financial report using all information provided.
-    Include the normalized_prices.png figure.
-    Create a table comparing all the fundamental ratios and data.
-    Provide comments and descriptions of all the fundamental ratios and data.
-    Compare the stocks, consider their correlation and risks.
-    Provide a summary of the recent news about each stock.
-    Ensure you comment and summarize the news headlines for each stock.
-    Provide connections between the news headlines and the fundamental ratios.
-    Provide an analysis of possible future scenarios."""
-
-    with st.spinner("Agents working..."):
+    with st.spinner("Agents working on the analysis..."):
         chat_results = autogen.initiate_chats([
             {
                 "sender": user_proxy_auto,
