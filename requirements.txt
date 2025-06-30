@@ -1,6 +1,6 @@
 pyautogen
-openai
-yfinance
 streamlit
+yfinance
 matplotlib
-python-dotenv  
+openai
+python-dotenv 
